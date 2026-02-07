@@ -15,6 +15,7 @@ export default function App() {
       const data = await getState();
       setState(data);
     }, 300);
+
     return () => clearInterval(interval);
   }, []);
 
