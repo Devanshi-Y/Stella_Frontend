@@ -1,16 +1,16 @@
-import { LineChart, Line, XAxis, YAxis, Tooltip } from "recharts";
+import { LineChart, Line, XAxis, YAxis } from "recharts";
+import { useRef } from "react";
 
 export default function ErrorGraph({ error }) {
-  const data = [{ t: 0, error }];
+  const data = useRef([]);
+  data.current.push({ t: data.current.length, e: error });
 
   return (
     <div className="card">
-      <h2 className="text-cyan-400 mb-2">Error</h2>
-      <LineChart width={350} height={200} data={data}>
+      <LineChart width={350} height={200} data={data.current}>
         <XAxis dataKey="t" />
         <YAxis />
-        <Tooltip />
-        <Line dataKey="error" stroke="#00F5FF" />
+        <Line dataKey="e" stroke="#ff3d3d" />
       </LineChart>
     </div>
   );
