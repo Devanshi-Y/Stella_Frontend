@@ -6,23 +6,20 @@ import { runSimulation, getState } from "./services/api";
 export default function App() {
   const [state, setState] = useState(null);
 
-  const startSim = async () => {
-    await runSimulation();
-  };
+  const start = async () => await runSimulation();
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const i = setInterval(async () => {
       try {
-        const data = await getState();
-        setState(data);
+        setState(await getState());
       } catch {}
-    }, 400);
-    return () => clearInterval(interval);
+    }, 200);
+    return () => clearInterval(i);
   }, []);
 
   return (
     <>
-      <Hero onStart={startSim} />
+      <Hero onStart={start} />
       <Dashboard state={state} />
     </>
   );
