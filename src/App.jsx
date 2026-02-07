@@ -12,9 +12,13 @@ export default function App() {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const data = await getState();
-      setState(data);
-    }, 300);
+      try {
+        const data = await getState();
+        setState(data);
+      } catch (e) {
+        console.log("Waiting for backend...");
+      }
+    }, 500);
 
     return () => clearInterval(interval);
   }, []);
