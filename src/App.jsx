@@ -15,11 +15,8 @@ export default function App() {
       try {
         const data = await getState();
         setState(data);
-      } catch (e) {
-        console.log("Waiting for backend...");
-      }
-    }, 500);
-
+      } catch {}
+    }, 400);
     return () => clearInterval(interval);
   }, []);
 
