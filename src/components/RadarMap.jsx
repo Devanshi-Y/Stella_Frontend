@@ -1,59 +1,34 @@
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-export default function MapPanel({ state }) {
-  const canvasRef = useRef(null);
+export default function RadarMap({ state }) {
+  const ref = useRef();
+  const trail = useRef([]);
 
   useEffect(() => {
     if (!state) return;
+    const ctx = ref.current.getContext("2d");
+    ctx.fillStyle = "#0a0f1c";
+    ctx.fillRect(0, 0, 400, 300);
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    trail.current.push([...state.estimated_position]);
+    ctx.strokeStyle = "#00f5ff";
+    ctx.beginPath();
+    trail.current.forEach((p, i) => {
+      const x = p[0] * 4 + 100;
+      const y = p[1] * 4 + 100;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
 
-    const draw = () => {
-      ctx.fillStyle = "#0A0F1C";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const x = state.true_position[0] * 4 + 100;
+    const y = state.true_position[1] * 4 + 100;
 
-      // Grid
-      ctx.strokeStyle = "#1f2937";
-      for (let i = 0; i < canvas.width; i += 40) {
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, canvas.height);
-        ctx.stroke();
-      }
-      for (let i = 0; i < canvas.height; i += 40) {
-        ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(canvas.width, i);
-        ctx.stroke();
-      }
-
-      // Drone true position
-      const x = state.true_position[0] * 5 + 100;
-      const y = state.true_position[1] * 5 + 100;
-
-      ctx.fillStyle = "#00FF9D";
-      ctx.beginPath();
-      ctx.arc(x, y, 6, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Estimated position
-      const ex = state.estimated_position[0] * 5 + 100;
-      const ey = state.estimated_position[1] * 5 + 100;
-
-      ctx.fillStyle = "#00F5FF";
-      ctx.beginPath();
-      ctx.arc(ex, ey, 6, 0, Math.PI * 2);
-      ctx.fill();
-    };
-
-    draw();
+    ctx.fillStyle = "#00ff9d";
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fill();
   }, [state]);
 
-  return (
-    <div className="card">
-      <h2 className="text-cyan-400 mb-2">Trajectory Radar</h2>
-      <canvas ref={canvasRef} width={400} height={300}></canvas>
-    </div>
-  );
+  return <canvas ref={ref} width={400} height={300} className="card" />;
 }
